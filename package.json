@@ -2,8 +2,10 @@
     "name": "runner",
     "version": "0.1.0",
     "private": true,
+    "homepage": "https://hamzashahab1610.github.io/Smart-Brain",
     "dependencies": {
         "clarifai": "^2.9.1",
+        "gh-pages": "^2.1.1",
         "node": "^12.10.0",
         "npm": "^6.11.3",
         "react": "^16.9.0",
@@ -14,6 +16,8 @@
         "tachyons": "^4.11.1"
     },
     "scripts": {
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
