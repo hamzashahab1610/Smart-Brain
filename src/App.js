@@ -23,6 +23,22 @@ const particlesOptions = {
 	}
 }
 
+const initialState = {
+  input: ' ',
+  imageUrl: ' ',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: '',
+
+  }
+};
+
 const app = new Clarifai.App({
 	apiKey: '24b767c615ed41bb8b141a2b0ea16eca'
 });
@@ -30,36 +46,17 @@ const app = new Clarifai.App({
 class App extends Component {
 	constructor() {
 		super();
-		this.state = {
-			input: ' ',
-			imageUrl: ' ',
-			box: {},
-			route: 'signin',
-			isSignedIn: false,
-			user: {
-				userId: '',
-				name: '',
-				email: '',
-				entries: 0,
-				joined: ''
-			}
+    this.state = initialState;
 		}
-	}
 
 	loadUser = (data) => {
 		this.setState({user: {
-			userId: data.userId,
+			id: data.id,
 			name: data.name,
 			email: data.email,
 			entries: data.entries,
 			joined: data.joined,}
 		})
-	}
-
-	componentDidMount() {
-		fetch('http://localhost:3000/')
-			.then(response => response.json())
-			.then(console.log);
 	}
 
 	calculateFaceLocation = (data) => {
@@ -87,7 +84,7 @@ class App extends Component {
 
 	onRouteChange = (route) => {
 		if (route === 'signout') {
-			this.setState({isSignedIn: false})
+			this.setState(initialState)
 		}
 		else if (route === 'home') {
 			this.setState({isSignedIn: true})
@@ -103,21 +100,22 @@ class App extends Component {
 			this.state.input)
 			.then(response => {
 				if (response) {
-					fetch('http://localhost:3000/image', {
+                    fetch('https://dry-basin-77991.herokuapp.com/image', {
 						method: 'put',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify({
-							id: this.state.user.userId
+							id: this.state.user.id
 						})
 					})
 						.then(response => response.json())
-						.then(count => {Object.assign(this.state.user, {entries: count})})
+            .then(count => { this.setState(Object.assign(this.state.user, { entries: count })) })
+          .catch(console.log)
 				}
 				this.displayFaceBox(this.calculateFaceLocation(response))
 			})
 			
 			.catch(error => console.log(error));
-	}
+	};
 
 	render() {
 		return (
@@ -155,5 +153,4 @@ class App extends Component {
 		);
 	}
 }
-
 export default App;
